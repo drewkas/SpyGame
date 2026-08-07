@@ -1,4 +1,4 @@
-alert("app.js loaded 1921");
+alert("app.js loaded");
 
 // =====================================================
 // SUPABASE CONNECTION
