@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpyGame</title>
+
+    style.css
+</head>
+<body>
+
+    <h1>Custom Spyfall</h1>
+
+    <!-- HOME SCREEN -->
+    <div id="home">
+
+        <h2>Create a Game</h2>
+
+        <button id="createGameBtn">
+            Create Game
+        </button>
+
+        <hr>
+
+        <h2>Join a Game</h2>
+
+        <input
+            type="text"
+            id="gameCode"
+            placeholder="Game Code"
+        >
+
+        <input
+            type="text"
+            id="playerName"
+            placeholder="Player Name"
+        >
+
+        <button id="joinGameBtn">
+            Join Game
+        </button>
+
+    </div>
+
+    <!-- HOST SECTION -->
+    <div id="hostPanel" style="display:none;">
+
+        <h2>Game Created</h2>
+
+        <p>
+            Share this code:
+            <strong id="displayCode"></strong>
+        </p>
+
+        <h3>Players</h3>
+
+        <ul id="playerList"></ul>
+
+        <button id="startGameBtn">
+            Start Round
+        </button>
+
+    </div>
+
+    <!-- WAITING ROOM -->
+    <div id="waitingRoom" style="display:none;">
+
+        <h2>Waiting for Host</h2>
+
+        <p>
+            You have successfully joined.
+        </p>
+
+        <p>
+            Waiting for the host to start the game...
+        </p>
+
+    </div>
+
+    <!-- ROLE DISPLAY -->
+    <div id="roleScreen" style="display:none;">
+
+        <h2>Your Assignment</h2>
+
+        <div id="roleResult">
+
+        </div>
+
+    </div>
+
+    app.jsscript>
+
+</body>
+</html>
