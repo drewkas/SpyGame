@@ -1,173 +1,138 @@
-// ======================================
-// Game Data
-// ======================================
+// =====================================================
+// SUPABASE CONNECTION
+// =====================================================
 
-let players = [];
+const SUPABASE_URL = "https://cevpdsrjsqavrrtlpyoa.supabase.co/rest/v1/";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNldnBkc3Jqc3FhdnJydGxweW9hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMzE3NTUsImV4cCI6MjEwMTcwNzc1NX0.nl5HKXm2AOcQYFDSQARmcRVXvCRe9cf32OEj3P5Jk6w";
 
-// Example worksheet roles
-let roles = [
-    "Pilot",
-    "Flight Attendant",
-    "Gate Agent",
-    "Security Officer",
-    "Baggage Handler",
-    "Air Traffic Controller",
-    "Mechanic",
-    "Customs Agent"
-];
+const supabase = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
-let gameCode = "";
+// =====================================================
+// GLOBAL VARIABLES
+// =====================================================
 
-// ======================================
-// Generate Random Game Code
-// ======================================
+let workbook = null;
+let currentGame = null;
+
+// =====================================================
+// LOAD EXCEL WORKBOOK
+// =====================================================
+
+async function loadWorkbook() {
+
+    try {
+
+        const response =
+            await fetch("locations.xlsx");
+
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        workbook =
+            XLSX.read(arrayBuffer, {
+                type: "array"
+            });
+
+        console.log(
+            "Workbook loaded:",
+            workbook.SheetNames
+        );
+
+    } catch (err) {
+
+        console.error(
+            "Failed to load workbook",
+            err
+        );
+    }
+}
+
+loadWorkbook();
+
+// =====================================================
+// GENERATE GAME CODE
+// =====================================================
 
 function generateCode(length = 6) {
 
     const chars =
         "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
-    let code = "";
+    let result = "";
 
     for (let i = 0; i < length; i++) {
 
-        code += chars[
-            Math.floor(Math.random() * chars.length)
-        ];
+        result +=
+            chars[
+                Math.floor(
+                    Math.random() *
+                    chars.length
+                )
+            ];
     }
 
-    return code;
+    return result;
 }
 
-// ======================================
-// Shuffle Array
-// ======================================
+// =====================================================
+// SHUFFLE ARRAY
+// =====================================================
 
 function shuffle(array) {
 
-    for (let i = array.length - 1; i > 0; i--) {
+    const arr = [...array];
+
+    for (
+        let i = arr.length - 1;
+        i > 0;
+        i--
+    ) {
 
         const j =
-            Math.floor(Math.random() * (i + 1));
+            Math.floor(
+                Math.random() *
+                (i + 1)
+            );
 
-        [array[i], array[j]] =
-            [array[j], array[i]];
+        [arr[i], arr[j]] =
+            [arr[j], arr[i]];
     }
 
-    return array;
+    return arr;
 }
 
-// ======================================
-// Create Game
-// ======================================
+// =====================================================
+// CREATE GAME
+// =====================================================
 
 document
     .getElementById("createGameBtn")
-    .addEventListener("click", () => {
+    .addEventListener(
+        "click",
+        createGame
+    );
 
-        gameCode = generateCode();
+async function createGame() {
 
-        document.getElementById(
-            "displayCode"
-        ).textContent = gameCode;
+    const gameCode =
+        generateCode();
 
-        document.getElementById(
-            "home"
-        ).style.display = "none";
+    const { data, error } =
+        await supabase
+            .from("games")
+            .insert({
+                game_code: gameCode,
+                status: "waiting"
+            })
+            .select()
+            .single();
 
-        document.getElementById(
-            "hostPanel"
-        ).style.display = "block";
-    });
+    if (error) {
 
-// ======================================
-// Join Game
-// ======================================
-
-document
-    .getElementById("joinGameBtn")
-    .addEventListener("click", () => {
-
-        const playerName =
-            document.getElementById(
-                "playerName"
-            ).value.trim();
-
-        if (playerName === "") {
-            alert("Enter a player name.");
-            return;
-        }
-
-        const player = {
-            id: Date.now(),
-            name: playerName
-        };
-
-        players.push(player);
-
-        updatePlayerList();
-
+        console.error(error);
         alert(
-            playerName +
-            " joined the game."
-        );
-
-        document.getElementById(
-            "playerName"
-        ).value = "";
-    });
-
-// ======================================
-// Update Waiting Room
-// ======================================
-
-function updatePlayerList() {
-
-    const list =
-        document.getElementById(
-            "playerList"
-        );
-
-    list.innerHTML = "";
-
-    players.forEach(player => {
-
-        const li =
-            document.createElement("li");
-
-        li.textContent =
-            player.name;
-
-        list.appendChild(li);
-    });
-}
-
-// ======================================
-// Start Game
-// ======================================
-
-document
-    .getElementById("startGameBtn")
-    .addEventListener("click", startGame);
-
-function startGame() {
-
-    if (players.length < 3) {
-
-        alert(
-            "Need at least 3 players."
-        );
-
-        return;
-    }
-
-    if (roles.length < players.length - 1) {
-
-        alert(
-            "Not enough roles."
-        );
-
-        return;
-    }
-
-    assignRoles();
+            "Failed to create game."
+   
