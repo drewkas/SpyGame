@@ -9,6 +9,22 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 console.log(window.supabase);
 
+try {
+
+    const supabase =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+    console.log("Supabase client created");
+
+} catch (err) {
+
+    console.error(err);
+
+}
+
 //const supabase = window.supabase.createClient(
 //    SUPABASE_URL,
 //    SUPABASE_KEY
