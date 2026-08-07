@@ -106,35 +106,219 @@ function shuffle(array) {
     return arr;
 }
 
-// =====================================================
-// CREATE GAME
-// =====================================================
+// ======================================
+// Create Game
+// ======================================
 
 document
     .getElementById("createGameBtn")
-    .addEventListener(
-        "click",
-        createGame
+    .addEventListener("click", () => {
+
+        gameCode = generateCode();
+
+        document.getElementById(
+            "displayCode"
+        ).textContent = gameCode;
+
+        document.getElementById(
+            "home"
+        ).style.display = "none";
+
+        document.getElementById(
+            "hostPanel"
+        ).style.display = "block";
+    });
+
+// ======================================
+// Join Game
+// ======================================
+
+document
+    .getElementById("joinGameBtn")
+    .addEventListener("click", () => {
+
+        const playerName =
+            document.getElementById(
+                "playerName"
+            ).value.trim();
+
+        if (playerName === "") {
+            alert("Enter a player name.");
+            return;
+        }
+
+        const player = {
+            id: Date.now(),
+            name: playerName
+        };
+
+        players.push(player);
+
+        updatePlayerList();
+
+        alert(
+            playerName +
+            " joined the game."
+        );
+
+        document.getElementById(
+            "playerName"
+        ).value = "";
+    });
+
+// ======================================
+// Update Waiting Room
+// ======================================
+
+function updatePlayerList() {
+
+    const list =
+        document.getElementById(
+            "playerList"
+        );
+
+    list.innerHTML = "";
+
+    players.forEach(player => {
+
+        const li =
+            document.createElement("li");
+
+        li.textContent =
+            player.name;
+
+        list.appendChild(li);
+    });
+}
+
+// ======================================
+// Start Game
+// ======================================
+
+document
+    .getElementById("startGameBtn")
+    .addEventListener("click", startGame);
+
+function startGame() {
+
+    if (players.length < 3) {
+
+        alert(
+            "Need at least 3 players."
+        );
+
+        return;
+    }
+
+    if (roles.length < players.length - 1) {
+
+        alert(
+            "Not enough roles."
+        );
+
+        return;
+    }
+
+    assignRoles();
+}
+
+// ======================================
+// Assign Spy And Roles
+// ======================================
+
+function assignRoles() {
+
+    const shuffledRoles =
+        shuffle([...roles]);
+
+    const spyIndex =
+        Math.floor(
+            Math.random() * players.length
+        );
+
+    let roleIndex = 0;
+
+    players.forEach((player, index) => {
+
+        if (index === spyIndex) {
+
+            player.assignment =
+                "You are the Spy";
+
+        } else {
+
+            player.assignment =
+                shuffledRoles[roleIndex];
+
+            roleIndex++;
+        }
+    });
+
+    showAssignments();
+}
+
+// ======================================
+// Demo Results Screen
+// ======================================
+
+function showAssignments() {
+
+    console.clear();
+
+    console.log("Assignments");
+
+    players.forEach(player => {
+
+        console.log(
+            player.name +
+            " -> " +
+            player.assignment
+        );
+    });
+
+    const name = prompt(
+        "Enter your player name to view your role:"
     );
 
-async function createGame() {
+    const player =
+        players.find(
+            p =>
+                p.name.toLowerCase() ===
+                name.toLowerCase()
+        );
 
-    const gameCode =
-        generateCode();
+    if (!player) {
 
-    const { data, error } =
-        await supabase
-            .from("games")
-            .insert({
-                game_code: gameCode,
-                status: "waiting"
-            })
-            .select()
-            .single();
+        alert("Player not found.");
 
-    if (error) {
+        return;
+    }
 
-        console.error(error);
-        alert(
-            "Failed to create game."
+    document.getElementById(
+        "hostPanel"
+    ).style.display = "none";
+
+    document.getElementById(
+        "roleScreen"
+    ).style.display = "block";
+
+    const roleResult =
+        document.getElementById(
+            "roleResult"
+        );
+
+    if (
+        player.assignment ===
+        "You are the Spy"
+    ) {
+
+        roleResult.innerHTML =
+            '<div class="spy">YOU ARE THE SPY</div>';
+
+    } else {
+
+        roleResult.innerHTML =
+            `<div class="role">${player.assignment}</div>`;
+    }
+}
    
