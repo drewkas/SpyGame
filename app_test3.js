@@ -355,3 +355,241 @@ function chooseRandomSheet() {
 
     return sheets[index];
 }
+
+// =====================================================
+// GET ROLES FROM SHEET
+// =====================================================
+
+function getRoles(sheetName) {
+
+    const worksheet =
+        workbook.Sheets[sheetName];
+
+    return XLSX.utils
+        .sheet_to_json(worksheet)
+        .map(
+            row => row.Role
+        )
+        .filter(Boolean);
+}
+
+
+// ======================================
+// Start Game
+// ======================================
+
+document
+    .getElementById("startGameBtn")
+    .addEventListener(
+        "click",
+        startGame
+    );
+
+async function startGame() {
+
+    const {
+        data: players,
+        error
+    } = await supabase
+        .from("players")
+        .select("*")
+        .eq(
+            "game_id",
+            currentGame.id
+        );
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    if (players.length < 3) {
+        alert(
+            "Need at least 3 players."
+        );
+        return;
+    }
+
+    const sheetName =
+        chooseRandomSheet();
+
+    const roles =
+        getRoles(sheetName);
+
+    if (
+        roles.length <
+        players.length - 1
+    ) {
+        alert(
+            "Not enough roles in "
+            + sheetName
+        );
+        return;
+    }
+
+    const shuffledRoles =
+        shuffle(roles);
+
+    const spyIndex =
+        Math.floor(
+            Math.random() *
+            players.length
+        );
+
+    let roleIndex = 0;
+
+    for (
+        let i = 0;
+        i < players.length;
+        i++
+    ) {
+
+        const player =
+            players[i];
+
+        if (i === spyIndex) {
+
+            await supabase
+                .from("players")
+                .update({
+                    is_spy: true,
+                    assigned_role: null
+                })
+                .eq(
+                    "id",
+                    player.id
+                );
+
+        } else {
+
+            await supabase
+                .from("players")
+                .update({
+                    is_spy: false,
+                    assigned_role:
+                        shuffledRoles[
+                            roleIndex
+                        ]
+                })
+                .eq(
+                    "id",
+                    player.id
+                );
+
+            roleIndex++;
+        }
+    }
+
+    await supabase
+        .from("games")
+        .update({
+            status: "started",
+            sheet_name:
+                sheetName
+        })
+        .eq(
+            "id",
+            currentGame.id
+        );
+
+    alert(
+        "Round Started!"
+    );
+}
+
+
+// ======================================
+// Assign Spy And Roles
+// ======================================
+
+async function revealRole() {
+
+    const playerId =
+        localStorage.getItem(
+            "playerId"
+        );
+
+    if (!playerId) {
+        return;
+    }
+
+    const {
+        data: player,
+        error
+    } = await supabase
+        .from("players")
+        .select("*")
+        .eq(
+            "id",
+            playerId
+        )
+        .single();
+
+    if (error || !player) {
+        return;
+    }
+
+    document.getElementById(
+        "waitingRoom"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "roleScreen"
+    ).style.display =
+        "block";
+
+    const result =
+        document.getElementById(
+            "roleResult"
+        );
+
+    if (player.is_spy) {
+
+        result.innerHTML =
+            '<div class="spy">YOU ARE THE SPY</div>';
+
+    } else {
+
+        result.innerHTML =
+            `<div class="role">${player.assigned_role}</div>`;
+    }
+}
+
+
+// =====================================================
+// POLL FOR GAME START
+// =====================================================
+
+setInterval(async () => {
+
+    const gameId =
+        localStorage.getItem(
+            "gameId"
+        );
+
+    if (!gameId) {
+        return;
+    }
+
+    const {
+        data: game
+    } = await supabase
+        .from("games")
+        .select("*")
+        .eq(
+            "id",
+            gameId
+        )
+        .single();
+
+    if (
+        game &&
+        game.status === "started"
+    ) {
+
+        revealRole();
+
+    }
+
+}, 3000);
