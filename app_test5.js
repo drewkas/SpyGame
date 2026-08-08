@@ -315,6 +315,15 @@ async function joinGame() {
         "block";
 }
 
+// ================================
+// LOCATIONS
+// ================================
+
+    document.getElementById(
+        "locations"
+    ).style.display =
+        "block";
+
 
 // =====================================================
 // PLAYER LIST
@@ -575,14 +584,6 @@ async function revealRole() {
         document.getElementById(
             "roleResult"
         );
-
-    // if (player.is_spy) {
-    //     result.innerHTML =
-    //         '<div class="spy">YOU ARE THE SPY</div>';
-    // } else {
-    //     result.innerHTML =
-    //         `<div class="role">${player.assigned_role}</div>`;
-    // }
 
     const gameId = localStorage.getItem("gameId");
 
