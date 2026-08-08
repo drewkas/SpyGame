@@ -3,7 +3,6 @@
 // ========================
 
 alert("app.js loaded");
-console.log("window.supabase =", window.supabase);
 
 // =====================================================
 // SUPABASE CONNECTION
@@ -20,6 +19,7 @@ try {
         );
 
     console.log("Supabase client created");
+    console.log("supabase =", window.supabase);
     console.log("supabase =", supabase);
 
 } catch (err) {
