@@ -624,8 +624,6 @@ setInterval(async () => {
             "gameId"
         );
 
-    console.log(gameId);
-
     if (!gameId) {
         return;
     }
@@ -640,6 +638,8 @@ setInterval(async () => {
             gameId
         )
         .single();
+
+    console.log("game: ", game);
 
     if (
         game &&
