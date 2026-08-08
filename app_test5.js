@@ -616,15 +616,16 @@ async function revealRole() {
     if (player.is_spy) {
         result.innerHTML = '<div class="spy">YOU ARE THE SPY</div>';
     } else {
-        result.innerHTML =
-            '<div class="location">
+        result.innerHTML = `
+            <div class="location">
                 Location: ${game.sheet_name}
             </div>
     
             <div class="role">
                 Role: ${player.assigned_role}
-            </div>'
-            ;
+            </div>
+            `
+        ;
     }
 }
 
