@@ -132,6 +132,10 @@ document
         createGame
     );
 
+// debug 
+console.log(Object.keys(supabase));
+//
+
 async function createGame() {
 
     const gameCode =
