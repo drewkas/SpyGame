@@ -551,12 +551,9 @@ async function revealRole() {
         );
 
     if (player.is_spy) {
-
         result.innerHTML =
             '<div class="spy">YOU ARE THE SPY</div>';
-
     } else {
-
         result.innerHTML =
             `<div class="role">${player.assigned_role}</div>`;
     }
@@ -593,9 +590,7 @@ setInterval(async () => {
         game &&
         game.status === "started"
     ) {
-
         revealRole();
-
     }
 
 }, 3000);
