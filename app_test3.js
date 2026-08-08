@@ -115,3 +115,66 @@ function shuffle(array) {
     }
     return arr;
 }
+
+// ======================================
+// Create Game
+// ======================================
+
+console.log("Looking for Create Game button");
+const button = document.getElementById("createGameBtn");
+console.log(button);
+
+document
+    .getElementById("createGameBtn")
+    .addEventListener(
+        "click",
+        createGame
+    );
+
+async function createGame() {
+
+    const gameCode =
+        generateCode();
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("games")
+        .insert({
+            game_code: gameCode,
+            status: "waiting"
+        })
+        .select()
+        .single();
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Unable to create game."
+        );
+
+        return;
+    }
+
+    currentGame = data;
+
+    document.getElementById(
+        "displayCode"
+    ).textContent =
+        gameCode;
+
+    document.getElementById(
+        "home"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "hostPanel"
+    ).style.display =
+        "block";
+
+    updatePlayerList();
+}
