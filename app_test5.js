@@ -79,7 +79,7 @@ loadWorkbook();
 function generateCode(length = 4) {
 
     const chars =
-        "abcdefghijklmnpqrstuvwxyz23456789";
+        "ABCDEFGHJKLMNPQRSTUVWXY23456789";
 
     let result = "";
 
