@@ -328,3 +328,20 @@ async function updatePlayerList() {
     });
 
 }
+
+// refresh waiting room every 3 seconds
+
+setInterval(() => {
+
+    if (currentGame) {
+
+        updatePlayerList();
+
+    }
+
+}, 3000);
+
+
+    });
+
+}
