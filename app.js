@@ -308,6 +308,8 @@ async function joinGame() {
         "waitingRoom"
     ).style.display =
         "block";
+
+    getLocations();
 }
 
 // ================================
