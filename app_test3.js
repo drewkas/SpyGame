@@ -17,12 +17,23 @@ try {
             SUPABASE_URL,
             SUPABASE_KEY
         );
-     
-    // console.log("client =", supabase);
-    // console.log("from =", supabase.from);
-    // console.log("typeof supabase.from =", typeof supabase.from);
-    // console.log("keys =", Object.keys(supabase));
 
+    // const supabaseClient =
+    //     window.supabase.createClient(
+    //         SUPABASE_URL,
+    //         SUPABASE_KEY
+    //     );
+
+    //console.log(supabaseClient);
+
+    console.log("client =", supabase);
+    console.log("from =", supabase.from);
+    console.log("typeof supabase.from =", typeof supabase.from);
+    console.log("keys =", Object.keys(supabase));
+
+    //console.log("Supabase client created");
+    //console.log("supabase =", window.supabase);
+    //console.log("supabase =", supabase);
 
 } catch (err) {
     console.error(err);
