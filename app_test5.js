@@ -391,7 +391,6 @@ function chooseRandomSheet() {
             sheets.length
         );
     
-    console.log("Sheet:", sheets[index]);
     return sheets[index];
 }
 
@@ -624,6 +623,8 @@ setInterval(async () => {
         localStorage.getItem(
             "gameId"
         );
+
+    console.log(gameId);
 
     if (!gameId) {
         return;
