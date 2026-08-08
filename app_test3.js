@@ -221,12 +221,10 @@ async function joinGame() {
         .from("games")
         .select("*")
         .eq("game_code", code)
-*       .single();
+        .single();
 
-    if (gameErr*r || !game) {
-
+    if (gameError || !game) {
         alert("Game not found.");
-
         return;
     }
 
