@@ -156,42 +156,119 @@ document
 
 document
     .getElementById("joinGameBtn")
-    .addEventListener("click", () => {
+    .addEventListener("click", joinGame);
 
-        const playerName =
-            document.getElementById(
-                "playerName"
-            ).value.trim();
+async function joinGame() {
 
-        if (playerName === "") {
-            alert("Enter a player name.");
-            return;
-        }
+    const code =
+        document
+            .getElementById("gameCode")
+            .value
+            .trim()
+            .toUpperCase();
 
-        const player = {
-            id: Date.now(),
-            name: playerName
-        };
+    const playerName =
+        document
+            .getElementById("playerName")
+            .value
+            .trim();
 
-        players.push(player);
-
-        updatePlayerList();
+    if (!code || !playerName) {
 
         alert(
-            playerName +
-            " joined the game."
+            "Please enter both a game code and player name."
         );
 
-        document.getElementById(
-            "playerName"
-        ).value = "";
-    });
+        return;
+    }
+
+    // Find the game
+
+    const {
+        data: game,
+        error: gameError
+    } = await supabase
+        .from("games")
+        .select("*")
+        .eq("game_code", code)
+        .single();
+
+    if (gameError || !game) {
+
+        alert("Game not found.");
+
+        console.error(gameError);
+
+        return;
+    }
+
+    // Add the player
+
+    const {
+        data: player,
+        error: playerError
+    } = await supabase
+        .from("players")
+        .insert({
+            game_id: game.id,
+            player_name: playerName
+        })
+        .select()
+        .single();
+
+    if (playerError) {
+
+        alert("Unable to join game.");
+
+        console.error(playerError);
+
+        return;
+    }
+
+    // Remember this player
+
+    localStorage.setItem(
+        "gameId",
+        game.id
+    );
+
+    localStorage.setItem(
+        "playerId",
+        player.id
+    );
+
+    localStorage.setItem(
+        "playerName",
+        playerName
+    );
+
+    alert(
+        playerName + " joined the game."
+    );
+
+    // Show waiting room
+
+    document.getElementById(
+        "home"
+    ).style.display = "none";
+
+    document.getElementById(
+        "waitingRoom"
+    ).style.display = "block";
+}
+
 
 // ======================================
 // Update Waiting Room
 // ======================================
 
-function updatePlayerList() {
+async function updatePlayerList() {
+
+    const { data: players } =
+        await supabase
+            .from("players")
+            .select("*")
+            .eq("game_id", currentGame.id);
 
     const list =
         document.getElementById(
@@ -206,7 +283,7 @@ function updatePlayerList() {
             document.createElement("li");
 
         li.textContent =
-            player.name;
+            player.player_name;
 
         list.appendChild(li);
     });
@@ -220,35 +297,41 @@ document
     .getElementById("startGameBtn")
     .addEventListener("click", startGame);
 
-function startGame() {
+async function startGame() {
+
+    const { data: players, error } =
+        await supabase
+            .from("players")
+            .select("*");
+
+    if (error) {
+
+        console.error(error);
+        return;
+    }
+
+    console.log(players);
 
     if (players.length < 3) {
 
-        alert(
-            "Need at least 3 players."
-        );
-
+        alert("Need at least 3 players.");
         return;
     }
 
-    if (roles.length < players.length - 1) {
-
-        alert(
-            "Not enough roles."
-        );
-
-        return;
-    }
-
-    assignRoles();
+    assignRoles(players);
 }
 
 // ======================================
 // Assign Spy And Roles
 // ======================================
 
-function assignRoles() {
+function assignRoles(players) {
 
+    const spyIndex =
+        Math.floor(
+            Math.random() * players.length
+        );
+    
     const sheetNames =
         workbook.SheetNames;
 
