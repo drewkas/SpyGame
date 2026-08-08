@@ -194,6 +194,21 @@ async function createGame() {
         .select()
         .single();
 
+    localStorage.setItem(
+    "playerId",
+    hostPlayer.id
+    );
+    
+    localStorage.setItem(
+        "gameId",
+        data.id
+    );
+    
+    localStorage.setItem(
+        "playerName",
+        hostName
+    );
+
     currentGame = data;
 
     document.getElementById(
