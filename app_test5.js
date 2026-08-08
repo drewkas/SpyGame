@@ -331,7 +331,7 @@ function getLocations() {
     sheets.forEach(sheet => {
         const li = document.createElement("li");
         li.textContent = sheet;
-        list.appendChild(li);
+        locationList.appendChild(li);
     });
     
 }
