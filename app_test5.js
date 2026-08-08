@@ -400,7 +400,7 @@ async function startGame() {
     const {
         data: players,
         error
-    } = await supabase
+    } = await mySupabase
         .from("players")
         .select("*")
         .eq(
@@ -459,7 +459,7 @@ async function startGame() {
 
         if (i === spyIndex) {
 
-            await supabase
+            await mySupabase
                 .from("players")
                 .update({
                     is_spy: true,
@@ -472,7 +472,7 @@ async function startGame() {
 
         } else {
 
-            await supabase
+            await mySupabase
                 .from("players")
                 .update({
                     is_spy: false,
@@ -490,7 +490,7 @@ async function startGame() {
         }
     }
 
-    await supabase
+    await mySupabase
         .from("games")
         .update({
             status: "started",
@@ -526,7 +526,7 @@ async function revealRole() {
     const {
         data: player,
         error
-    } = await supabase
+    } = await mySupabase
         .from("players")
         .select("*")
         .eq(
@@ -581,7 +581,7 @@ setInterval(async () => {
 
     const {
         data: game
-    } = await supabase
+    } = await mySupabase
         .from("games")
         .select("*")
         .eq(
