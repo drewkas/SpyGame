@@ -336,3 +336,39 @@ setInterval(() => {
         updatePlayerList();
     }
 }, 3000);
+
+
+// =====================================================
+// RANDOM SHEET
+// =====================================================
+
+function chooseRandomSheet() {
+
+    const sheets =
+        workbook.SheetNames;
+
+    const index =
+        Math.floor(
+            Math.random() *
+            sheets.length
+        );
+
+    return sheets[index];
+}
+
+// =====================================================
+// GET ROLES FROM SHEET
+// =====================================================
+
+function getRoles(sheetName) {
+
+    const worksheet =
+        workbook.Sheets[sheetName];
+
+    return XLSX.utils
+        .sheet_to_json(worksheet)
+        .map(
+            row => row.Role
+        )
+        .filter(Boolean);
+}
