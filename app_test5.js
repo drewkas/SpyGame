@@ -25,11 +25,6 @@ try {
     console.error(err);
 }
 
-// console.log("GLOBAL supabase =", mySupabase);
-// console.log("GLOBAL keys =", Object.keys(mySupabase));
-// console.log("GLOBAL typeof from =", typeof mySupabase.from);
-// console.log("GLOBAL from =", mySupabase.from);
-
 // =====================================================
 // GLOBAL VARIABLES
 // =====================================================
@@ -57,10 +52,7 @@ async function loadWorkbook() {
                 type: "array"
             });
 
-        console.log(
-            "Workbook loaded:",
-            workbook.SheetNames
-        );
+        console.log("Workbook loaded:", workbook.SheetNames);
 
     } catch (err) {
 
@@ -140,11 +132,6 @@ document
 async function createGame() {
 
     console.log("createGame running");
-    
-    // console.log("LOCAL supabase =", mySupabase);
-    // console.log("LOCAL keys =", Object.keys(mySupabase));
-    // console.log("LOCAL typeof from =", typeof mySupabase.from);
-    // console.log("LOCAL from =", mySupabase.from);
     
     const gameCode = generateCode();
 
@@ -460,11 +447,11 @@ async function startGame() {
         return;
     }
 
-    const sheetName =
-        chooseRandomSheet();
+    const sheetName = chooseRandomSheet();
 
-    const roles =
-        getRoles(sheetName);
+    console.log("Sheet:", sheetName);
+    
+    const roles = getRoles(sheetName);
 
     if (
         roles.length <
@@ -477,8 +464,7 @@ async function startGame() {
         return;
     }
 
-    const shuffledRoles =
-        shuffle(roles);
+    const shuffledRoles = shuffle(roles);
 
     const spyIndex =
         Math.floor(
