@@ -69,3 +69,77 @@ async function loadWorkbook() {
 
 loadWorkbook();
 
+// =====================================================
+// GENERATE GAME CODE
+// =====================================================
+
+function generateCode(length = 6) {
+
+    const chars =
+        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+    let result = "";
+
+    for (let i = 0; i < length; i++) {
+
+        result +=
+            chars[
+                Math.floor(
+                    Math.random() *
+                    chars.length
+                )
+            ];
+    }
+
+    return result;
+}
+
+// =====================================================
+// SHUFFLE ARRAY
+// =====================================================
+
+function shuffle(array) {
+
+    const arr = [...array];
+
+    for (
+        let i = arr.length - 1;
+        i > 0;
+        i--
+    ) {
+
+        const j =
+            Math.floor(
+                Math.random() *
+                (i + 1)
+            );
+
+        [arr[i], arr[j]] =
+            [arr[j], arr[i]];
+    }
+
+    return arr;
+}
+
+// ======================================
+// Create Game
+// ======================================
+
+document
+    .getElementById("createGameBtn")
+    .addEventListener("click", () => {
+
+        gameCode = generateCode();
+
+        document.getElementById(
+            "displayCode"
+        ).textContent = gameCode;
+
+        document.getElementById(
+            "home"
+        ).style.display = "none";
+
+        document.getElementById(
+            "hostPanel"
+        ).style.display = "block";
+    });
