@@ -25,10 +25,10 @@ try {
     console.error(err);
 }
 
-console.log("GLOBAL supabase =", mySupabase);
-console.log("GLOBAL keys =", Object.keys(mySupabase));
-console.log("GLOBAL typeof from =", typeof mySupabase.from);
-console.log("GLOBAL from =", mySupabase.from);
+// console.log("GLOBAL supabase =", mySupabase);
+// console.log("GLOBAL keys =", Object.keys(mySupabase));
+// console.log("GLOBAL typeof from =", typeof mySupabase.from);
+// console.log("GLOBAL from =", mySupabase.from);
 
 // =====================================================
 // GLOBAL VARIABLES
@@ -140,10 +140,10 @@ async function createGame() {
 
     console.log("createGame running");
     
-    console.log("LOCAL supabase =", mySupabase);
-    console.log("LOCAL keys =", Object.keys(mySupabase));
-    console.log("LOCAL typeof from =", typeof mySupabase.from);
-    console.log("LOCAL from =", mySupabase.from);
+    // console.log("LOCAL supabase =", mySupabase);
+    // console.log("LOCAL keys =", Object.keys(mySupabase));
+    // console.log("LOCAL typeof from =", typeof mySupabase.from);
+    // console.log("LOCAL from =", mySupabase.from);
     
     const gameCode = generateCode();
 
