@@ -139,7 +139,7 @@ async function createGame() {
     console.log(
         "typeof supabase.from =",
         typeof supabase.from
-    );
+    );}
     
     const gameCode =
         generateCode();
