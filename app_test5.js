@@ -453,7 +453,7 @@ async function startGame() {
         return;
     }
 
-    if (players.length < 3) {
+    if (players.length < 1) {
         alert(
             "Need at least 3 players."
         );
