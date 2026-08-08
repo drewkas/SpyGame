@@ -147,6 +147,8 @@ async function createGame() {
     
     const gameCode = generateCode();
 
+    console.log("Created game code:", gameCode);
+    
     const {
         data,
         error
