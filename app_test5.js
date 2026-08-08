@@ -321,8 +321,8 @@ async function joinGame() {
 // ================================
 
 function getLocations() {
-    const sheets =
-        workbook.SheetNames;
+    
+    const sheets = workbook.SheetNames;
     
     const locationList = document.getElementById("locations");
     
@@ -333,6 +333,7 @@ function getLocations() {
         li.textContent = sheet;
         list.appendChild(li);
     });
+    
 }
 
 // =====================================================
