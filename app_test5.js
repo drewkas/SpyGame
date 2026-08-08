@@ -2,7 +2,7 @@
 // Startup
 // ========================
 
-alert("app.js loaded");
+// alert("app.js loaded");
 
 // =====================================================
 // SUPABASE CONNECTION
