@@ -1,16 +1,25 @@
-alert("app.js loaded");
-
 // =====================================================
 // SUPABASE CONNECTION
 // =====================================================
 
-const SUPABASE_URL = "https://cevpdsrjsqavrrtlpyoa.supabase.co/rest/v1/";
+localStorage.clear();
+
+const SUPABASE_URL = "https://cevpdsrjsqavrrtlpyoa.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNldnBkc3Jqc3FhdnJydGxweW9hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMzE3NTUsImV4cCI6MjEwMTcwNzc1NX0.nl5HKXm2AOcQYFDSQARmcRVXvCRe9cf32OEj3P5Jk6w";
 
-const supabase = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+const mySupabase =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+try {
+    console.log(
+        "Supabase client created"
+    );
+} catch (err) {
+    console.error(err);
+}
 
 // =====================================================
 // GLOBAL VARIABLES
@@ -18,6 +27,7 @@ const supabase = window.supabase.createClient(
 
 let workbook = null;
 let currentGame = null;
+let sheetName = null;
 
 // =====================================================
 // LOAD EXCEL WORKBOOK
@@ -38,10 +48,7 @@ async function loadWorkbook() {
                 type: "array"
             });
 
-        console.log(
-            "Workbook loaded:",
-            workbook.SheetNames
-        );
+        console.log("Workbook loaded:", workbook.SheetNames);
 
     } catch (err) {
 
@@ -58,10 +65,10 @@ loadWorkbook();
 // GENERATE GAME CODE
 // =====================================================
 
-function generateCode(length = 6) {
+function generateCode(length = 4) {
 
     const chars =
-        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        "ABCDEFGHJKLMNPQRSTUVWXY23456789";
 
     let result = "";
 
@@ -75,7 +82,6 @@ function generateCode(length = 6) {
                 )
             ];
     }
-
     return result;
 }
 
@@ -92,7 +98,6 @@ function shuffle(array) {
         i > 0;
         i--
     ) {
-
         const j =
             Math.floor(
                 Math.random() *
@@ -102,7 +107,6 @@ function shuffle(array) {
         [arr[i], arr[j]] =
             [arr[j], arr[i]];
     }
-
     return arr;
 }
 
@@ -110,24 +114,101 @@ function shuffle(array) {
 // Create Game
 // ======================================
 
+const button = document.getElementById("createGameBtn");
+
 document
     .getElementById("createGameBtn")
-    .addEventListener("click", () => {
+    .addEventListener(
+        "click",
+        createGame
+    );
 
-        gameCode = generateCode();
+async function createGame() {
 
-        document.getElementById(
-            "displayCode"
-        ).textContent = gameCode;
+    const gameCode = generateCode();
 
-        document.getElementById(
-            "home"
-        ).style.display = "none";
+    console.log("Created game code:", gameCode);
 
-        document.getElementById(
-            "hostPanel"
-        ).style.display = "block";
-    });
+    const hostName =
+        document
+            .getElementById("playerName")
+            .value
+            .trim();
+
+    if (!hostName) {
+        alert("Please enter your name.");
+        return;
+    }
+    
+    const {
+        data,
+        error
+    } = await mySupabase
+        .from("games")
+        .insert({
+            game_code: gameCode,
+            status: "waiting"
+        })
+        .select()
+        .single();
+
+    if (error) {
+        console.error(error);
+        alert(
+            "Unable to create game."
+        );
+
+        return;
+    }
+ 
+    const {
+        data: hostPlayer,
+        error: playerError
+    } = await mySupabase
+        .from("players")
+        .insert({
+            game_id: data.id,
+            player_name: hostName,
+            is_host: true
+        })
+        .select()
+        .single();
+
+    localStorage.setItem(
+    "playerId",
+    hostPlayer.id
+    );
+    
+    localStorage.setItem(
+        "gameId",
+        data.id
+    );
+    
+    localStorage.setItem(
+        "playerName",
+        hostName
+    );
+
+    currentGame = data;
+
+    document.getElementById(
+        "displayCode"
+    ).textContent =
+        gameCode;
+
+    document.getElementById(
+        "home"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "hostPanel"
+    ).style.display =
+        "block";
+
+    updatePlayerList();
+    getLocations();
+}
 
 // ======================================
 // Join Game
@@ -135,42 +216,147 @@ document
 
 document
     .getElementById("joinGameBtn")
-    .addEventListener("click", () => {
+    .addEventListener(
+        "click",
+        joinGame
+    );
 
-        const playerName =
-            document.getElementById(
-                "playerName"
-            ).value.trim();
+async function joinGame() {
 
-        if (playerName === "") {
-            alert("Enter a player name.");
-            return;
-        }
+    const code =
+        document
+            .getElementById("gameCode")
+            .value
+            .trim()
+            .toUpperCase();
 
-        const player = {
-            id: Date.now(),
-            name: playerName
-        };
+    const playerName =
+        document
+            .getElementById("playerName")
+            .value
+            .trim();
 
-        players.push(player);
-
-        updatePlayerList();
+    if (!code || !playerName) {
 
         alert(
-            playerName +
-            " joined the game."
+            "Enter a game code and player name."
         );
 
-        document.getElementById(
-            "playerName"
-        ).value = "";
+        return;
+    }
+
+    console.log("Searching for game:", code);
+    
+    const {
+        data: game,
+        error: gameError
+    } = await mySupabase
+        .from("games")
+        .select("*")
+        .eq("game_code", code)
+        .single();
+
+    if (gameError || !game) {
+        alert("Game not found.");
+        return;
+    }
+
+    const {
+        data: player,
+        error: playerError
+    } = await mySupabase
+        .from("players")
+        .insert({
+            game_id: game.id,
+            player_name: playerName
+        })
+        .select()
+        .single();
+
+    if (playerError) {
+
+        console.error(playerError);
+
+        alert(
+            "Unable to join game."
+        );
+
+        return;
+    }
+
+    localStorage.setItem(
+        "playerId",
+        player.id
+    );
+
+    localStorage.setItem(
+        "gameId",
+        game.id
+    );
+
+    localStorage.setItem(
+        "playerName",
+        playerName
+    );
+
+    document.getElementById(
+        "home"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "waitingRoom"
+    ).style.display =
+        "block";
+}
+
+// ================================
+// LOCATIONS
+// ================================
+
+function getLocations() {
+    
+    const sheets = workbook.SheetNames;
+    
+    const locationList = document.getElementById("locations");
+    
+    // locationList.innerHTML = "location list here: " + sheets[sheets.length - 1];
+
+    sheets.forEach(sheet => {
+        const li = document.createElement("li");
+        li.textContent = sheet;
+        locationList.appendChild(li);
     });
+    
+}
 
-// ======================================
-// Update Waiting Room
-// ======================================
+// =====================================================
+// PLAYER LIST
+// =====================================================
 
-function updatePlayerList() {
+async function updatePlayerList() {
+
+    if (!currentGame) {
+        return;
+    }
+
+    const {
+        data: players,
+        error
+    } = await mySupabase
+        .from("players")
+        .select("*")
+        .eq(
+            "game_id",
+            currentGame.id
+        );
+
+    if (error) {
+
+        console.error(error);
+
+        return;
+    }
 
     const list =
         document.getElementById(
@@ -185,10 +371,56 @@ function updatePlayerList() {
             document.createElement("li");
 
         li.textContent =
-            player.name;
+            player.player_name;
 
         list.appendChild(li);
+
     });
+
+}
+
+// refresh waiting room every 3 seconds
+
+setInterval(() => {
+    if (currentGame) {
+        updatePlayerList();
+    }
+}, 3000);
+
+
+// =====================================================
+// RANDOM SHEET
+// =====================================================
+
+function chooseRandomSheet() {
+
+    const sheets =
+        workbook.SheetNames;
+
+    const index =
+        Math.floor(
+            Math.random() *
+            sheets.length
+        );
+    
+    return sheets[index];
+}
+
+// =====================================================
+// GET ROLES FROM SHEET
+// =====================================================
+
+function getRoles(sheetName) {
+
+    const worksheet =
+        workbook.Sheets[sheetName];
+
+    return XLSX.utils
+        .sheet_to_json(worksheet)
+        .map(
+            row => row.Role
+        )
+        .filter(Boolean);
 }
 
 // ======================================
@@ -197,128 +429,229 @@ function updatePlayerList() {
 
 document
     .getElementById("startGameBtn")
-    .addEventListener("click", startGame);
+    .addEventListener(
+        "click",
+        startGame
+    );
 
-function startGame() {
+async function startGame() {
 
-    if (players.length < 3) {
+    const {
+        data: players,
+        error
+    } = await mySupabase
+        .from("players")
+        .select("*")
+        .eq(
+            "game_id",
+            currentGame.id
+        );
 
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    if (players.length < 1) {
         alert(
             "Need at least 3 players."
         );
-
         return;
     }
 
-    if (roles.length < players.length - 1) {
+    const sheetName = chooseRandomSheet();
 
+    const roles = getRoles(sheetName);
+
+    if (
+        roles.length <
+        players.length - 1
+    ) {
         alert(
-            "Not enough roles."
+            "Not enough roles in "
+            + sheetName
+        );
+        return;
+    }
+
+    const shuffledRoles = shuffle(roles);
+
+    const spyIndex =
+        Math.floor(
+            Math.random() *
+            players.length
         );
 
-        return;
+    let roleIndex = 0;
+
+    for (
+        let i = 0;
+        i < players.length;
+        i++
+    ) {
+
+        const player =
+            players[i];
+
+        if (i === spyIndex) {
+
+            await mySupabase
+                .from("players")
+                .update({
+                    is_spy: true,
+                    assigned_role: null
+                })
+                .eq(
+                    "id",
+                    player.id
+                );
+
+        } else {
+
+            await mySupabase
+                .from("players")
+                .update({
+                    is_spy: false,
+                    assigned_role:
+                        shuffledRoles[
+                            roleIndex
+                        ]
+                })
+                .eq(
+                    "id",
+                    player.id
+                );
+
+            roleIndex++;
+        }
     }
 
-    assignRoles();
+    await mySupabase
+        .from("games")
+        .update({
+            status: "started",
+            sheet_name:
+                sheetName
+        })
+        .eq(
+            "id",
+            currentGame.id
+        );
+
+    alert(
+        "Round Started!"
+    );
 }
+
 
 // ======================================
 // Assign Spy And Roles
 // ======================================
 
-function assignRoles() {
+async function revealRole() {
 
-    const shuffledRoles =
-        shuffle([...roles]);
-
-    const spyIndex =
-        Math.floor(
-            Math.random() * players.length
+    const playerId =
+        localStorage.getItem(
+            "playerId"
         );
 
-    let roleIndex = 0;
+    if (!playerId) {
+        return;
+    }
 
-    players.forEach((player, index) => {
+    const {
+        data: player,
+        error
+    } = await mySupabase
+        .from("players")
+        .select("*")
+        .eq(
+            "id",
+            playerId
+        )
+        .single();
 
-        if (index === spyIndex) {
-
-            player.assignment =
-                "You are the Spy";
-
-        } else {
-
-            player.assignment =
-                shuffledRoles[roleIndex];
-
-            roleIndex++;
-        }
-    });
-
-    showAssignments();
-}
-
-// ======================================
-// Demo Results Screen
-// ======================================
-
-function showAssignments() {
-
-    console.clear();
-
-    console.log("Assignments");
-
-    players.forEach(player => {
-
-        console.log(
-            player.name +
-            " -> " +
-            player.assignment
-        );
-    });
-
-    const name = prompt(
-        "Enter your player name to view your role:"
-    );
-
-    const player =
-        players.find(
-            p =>
-                p.name.toLowerCase() ===
-                name.toLowerCase()
-        );
-
-    if (!player) {
-
-        alert("Player not found.");
-
+    if (error || !player) {
         return;
     }
 
     document.getElementById(
-        "hostPanel"
-    ).style.display = "none";
+        "waitingRoom"
+    ).style.display =
+        "none";
 
     document.getElementById(
         "roleScreen"
-    ).style.display = "block";
+    ).style.display =
+        "block";
 
-    const roleResult =
+    const result =
         document.getElementById(
             "roleResult"
         );
 
-    if (
-        player.assignment ===
-        "You are the Spy"
-    ) {
+    const gameId = localStorage.getItem("gameId");
 
-        roleResult.innerHTML =
-            '<div class="spy">YOU ARE THE SPY</div>';
-
+    const {
+        data: game,
+        error: gameError
+    } = await mySupabase
+        .from("games")
+        .select("*")
+        .eq("id", gameId)
+        .single();
+    
+    if (player.is_spy) {
+        result.innerHTML = '<div class="spy">YOU ARE THE SPY</div>';
     } else {
-
-        roleResult.innerHTML =
-            `<div class="role">${player.assignment}</div>`;
+        result.innerHTML = `
+            <div class="location">
+                Location: ${game.sheet_name}
+            </div>
+            <div class="role">
+                Role: ${player.assigned_role}
+            </div>
+            `
+        ;
     }
 }
-   
+
+
+// =====================================================
+// POLL FOR GAME START
+// =====================================================
+
+setInterval(async () => {
+
+    const gameId =
+        localStorage.getItem(
+            "gameId"
+        );
+
+    // console.log("gameId: ", gameId);
+
+    if (!gameId) {
+        return;
+    }
+
+    const {
+        data: game
+    } = await mySupabase
+        .from("games")
+        .select("*")
+        .eq(
+            "id",
+            gameId
+        )
+        .single();
+
+    // console.log("game status:", game?.status);
+    
+    if (
+        game &&
+        game.status === "started"
+    ) {
+        revealRole();
+    }
+
+}, 3000);
