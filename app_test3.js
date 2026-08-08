@@ -27,3 +27,70 @@ try {
     console.error(err);
 
 }
+
+// =====================================================
+// GLOBAL VARIABLES
+// =====================================================
+
+let workbook = null;
+let currentGame = null;
+
+// =====================================================
+// LOAD EXCEL WORKBOOK
+// =====================================================
+
+async function loadWorkbook() {
+
+    try {
+
+        const response =
+            await fetch("locations.xlsx");
+
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        workbook =
+            XLSX.read(arrayBuffer, {
+                type: "array"
+            });
+
+        console.log(
+            "Workbook loaded:",
+            workbook.SheetNames
+        );
+
+    } catch (err) {
+
+        console.error(
+            "Failed to load workbook",
+            err
+        );
+    }
+}
+
+loadWorkbook();
+
+// =====================================================
+// GENERATE GAME CODE
+// =====================================================
+
+function generateCode(length = 4) {
+
+    const chars =
+        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+    let result = "";
+
+    for (let i = 0; i < length; i++) {
+
+        result +=
+            chars[
+                Math.floor(
+                    Math.random() *
+                    chars.length
+                )
+            ];
+    }
+
+    return result;
+}
