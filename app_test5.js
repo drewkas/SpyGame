@@ -180,6 +180,19 @@ async function createGame() {
 
         return;
     }
+ 
+    const {
+        data: hostPlayer,
+        error: playerError
+    } = await mySupabase
+        .from("players")
+        .insert({
+            game_id: data.id,
+            player_name: hostName,
+            is_host: true
+        })
+        .select()
+        .single();
 
     currentGame = data;
 
