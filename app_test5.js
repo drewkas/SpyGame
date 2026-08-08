@@ -278,3 +278,53 @@ async function joinGame() {
     ).style.display =
         "block";
 }
+
+
+// =====================================================
+// PLAYER LIST
+// =====================================================
+
+async function updatePlayerList() {
+
+    if (!currentGame) {
+        return;
+    }
+
+    const {
+        data: players,
+        error
+    } = await supabase
+        .from("players")
+        .select("*")
+        .eq(
+            "game_id",
+            currentGame.id
+        );
+
+    if (error) {
+
+        console.error(error);
+
+        return;
+    }
+
+    const list =
+        document.getElementById(
+            "playerList"
+        );
+
+    list.innerHTML = "";
+
+    players.forEach(player => {
+
+        const li =
+            document.createElement("li");
+
+        li.textContent =
+            player.player_name;
+
+        list.appendChild(li);
+
+    });
+
+}
