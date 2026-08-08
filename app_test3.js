@@ -149,9 +149,7 @@ async function createGame() {
         .single();
 
     if (error) {
-
         console.error(error);
-
         alert(
             "Unable to create game."
         );
