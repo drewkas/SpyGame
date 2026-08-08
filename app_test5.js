@@ -11,23 +11,6 @@ alert("app.js loaded");
 const SUPABASE_URL = "https://cevpdsrjsqavrrtlpyoa.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNldnBkc3Jqc3FhdnJydGxweW9hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMzE3NTUsImV4cCI6MjEwMTcwNzc1NX0.nl5HKXm2AOcQYFDSQARmcRVXvCRe9cf32OEj3P5Jk6w";
 
-// try {
-//     const mySupabase =
-//         window.supabase.createClient(
-//             SUPABASE_URL,
-//             SUPABASE_KEY
-//         );
-
-//     console.log("GLOBAL supabase =", mySupabase);
-//     console.log("GLOBAL keys =", Object.keys(mySupabase));
-//     console.log("GLOBAL typeof from =", typeof mySupabase.from);
-//     console.log("GLOBAL from =", mySupabase.from);
-
-// } catch (err) {
-//     console.error(err);
-// }
-
-
 const mySupabase =
     window.supabase.createClient(
         SUPABASE_URL,
@@ -396,3 +379,223 @@ function getRoles(sheetName) {
         )
         .filter(Boolean);
 }
+
+// ======================================
+// Start Game
+// ======================================
+
+document
+    .getElementById("startGameBtn")
+    .addEventListener(
+        "click",
+        startGame
+    );
+
+async function startGame() {
+
+    const {
+        data: players,
+        error
+    } = await supabase
+        .from("players")
+        .select("*")
+        .eq(
+            "game_id",
+            currentGame.id
+        );
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    if (players.length < 3) {
+        alert(
+            "Need at least 3 players."
+        );
+        return;
+    }
+
+    const sheetName =
+        chooseRandomSheet();
+
+    const roles =
+        getRoles(sheetName);
+
+    if (
+        roles.length <
+        players.length - 1
+    ) {
+        alert(
+            "Not enough roles in "
+            + sheetName
+        );
+        return;
+    }
+
+    const shuffledRoles =
+        shuffle(roles);
+
+    const spyIndex =
+        Math.floor(
+            Math.random() *
+            players.length
+        );
+
+    let roleIndex = 0;
+
+    for (
+        let i = 0;
+        i < players.length;
+        i++
+    ) {
+
+        const player =
+            players[i];
+
+        if (i === spyIndex) {
+
+            await supabase
+                .from("players")
+                .update({
+                    is_spy: true,
+                    assigned_role: null
+                })
+                .eq(
+                    "id",
+                    player.id
+                );
+
+        } else {
+
+            await supabase
+                .from("players")
+                .update({
+                    is_spy: false,
+                    assigned_role:
+                        shuffledRoles[
+                            roleIndex
+                        ]
+                })
+                .eq(
+                    "id",
+                    player.id
+                );
+
+            roleIndex++;
+        }
+    }
+
+    await supabase
+        .from("games")
+        .update({
+            status: "started",
+            sheet_name:
+                sheetName
+        })
+        .eq(
+            "id",
+            currentGame.id
+        );
+
+    alert(
+        "Round Started!"
+    );
+}
+
+
+// ======================================
+// Assign Spy And Roles
+// ======================================
+
+async function revealRole() {
+
+    const playerId =
+        localStorage.getItem(
+            "playerId"
+        );
+
+    if (!playerId) {
+        return;
+    }
+
+    const {
+        data: player,
+        error
+    } = await supabase
+        .from("players")
+        .select("*")
+        .eq(
+            "id",
+            playerId
+        )
+        .single();
+
+    if (error || !player) {
+        return;
+    }
+
+    document.getElementById(
+        "waitingRoom"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "roleScreen"
+    ).style.display =
+        "block";
+
+    const result =
+        document.getElementById(
+            "roleResult"
+        );
+
+    if (player.is_spy) {
+
+        result.innerHTML =
+            '<div class="spy">YOU ARE THE SPY</div>';
+
+    } else {
+
+        result.innerHTML =
+            `<div class="role">${player.assigned_role}</div>`;
+    }
+}
+
+
+// =====================================================
+// POLL FOR GAME START
+// =====================================================
+
+setInterval(async () => {
+
+    const gameId =
+        localStorage.getItem(
+            "gameId"
+        );
+
+    if (!gameId) {
+        return;
+    }
+
+    const {
+        data: game
+    } = await supabase
+        .from("games")
+        .select("*")
+        .eq(
+            "id",
+            gameId
+        )
+        .single();
+
+    if (
+        game &&
+        game.status === "started"
+    ) {
+
+        revealRole();
+
+    }
+
+}, 3000);
