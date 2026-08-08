@@ -594,12 +594,37 @@ async function revealRole() {
             "roleResult"
         );
 
+    // if (player.is_spy) {
+    //     result.innerHTML =
+    //         '<div class="spy">YOU ARE THE SPY</div>';
+    // } else {
+    //     result.innerHTML =
+    //         `<div class="role">${player.assigned_role}</div>`;
+    // }
+
+    const gameId = localStorage.getItem("gameId");
+
+    const {
+        data: game,
+        error: gameError
+    } = await mySupabase
+        .from("games")
+        .select("*")
+        .eq("id", gameId)
+        .single();
+    
     if (player.is_spy) {
-        result.innerHTML =
-            '<div class="spy">YOU ARE THE SPY</div>';
+        result.innerHTML = '<div class="spy">YOU ARE THE SPY</div>';
     } else {
         result.innerHTML =
-            `<div class="role">${player.assigned_role}</div>`;
+            '<div class="location">
+                Location: ${game.sheet_name}
+            </div>
+    
+            <div class="role">
+                Role: ${player.assigned_role}
+            </div>'
+            ;
     }
 }
 
