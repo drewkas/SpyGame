@@ -18,6 +18,8 @@ try {
             SUPABASE_KEY
         );
 
+    console.log("typeof supabase.from =", typeof supabase.from);
+
 } catch (err) {
     console.error(err);
 }
@@ -132,10 +134,7 @@ async function createGame() {
 
     console.log("createGame running");
     console.log("supabase =", supabase);
-    console.log(
-        "typeof supabase.from =",
-        typeof supabase.from
-    );
+    console.log("typeof supabase.from =", typeof supabase.from);
     
     const gameCode =
         generateCode();
