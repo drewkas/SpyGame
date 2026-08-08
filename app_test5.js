@@ -320,10 +320,10 @@ async function joinGame() {
 // ================================
 
 
-    document.getElementById(
-        "locationScreen"
-    ).style.display =
-        "block";
+    // document.getElementById(
+    //     "locationScreen"
+    // ).style.display =
+    //     "block";
 
     const locationList =
         document.getElementById(
