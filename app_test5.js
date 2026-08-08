@@ -34,6 +34,14 @@ const mySupabase =
         SUPABASE_KEY
     );
 
+try {
+    console.log(
+        "Supabase client created"
+    );
+} catch (err) {
+    console.error(err);
+}
+
 console.log("GLOBAL supabase =", mySupabase);
 console.log("GLOBAL keys =", Object.keys(mySupabase));
 console.log("GLOBAL typeof from =", typeof mySupabase.from);
