@@ -324,6 +324,8 @@ async function joinGame() {
     ).style.display =
         "block";
 
+    result.innerHTML = '<div class="spy">YOU ARE THE SPY</div>';
+
 
 // =====================================================
 // PLAYER LIST
