@@ -12,16 +12,16 @@ const SUPABASE_URL = "https://cevpdsrjsqavrrtlpyoa.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNldnBkc3Jqc3FhdnJydGxweW9hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMzE3NTUsImV4cCI6MjEwMTcwNzc1NX0.nl5HKXm2AOcQYFDSQARmcRVXvCRe9cf32OEj3P5Jk6w";
 
 try {
-    const supabase =
+    const mySupabase =
         window.supabase.createClient(
             SUPABASE_URL,
             SUPABASE_KEY
         );
 
-    console.log("GLOBAL supabase =", supabase);
-    console.log("GLOBAL keys =", Object.keys(supabase));
-    console.log("GLOBAL typeof from =", typeof supabase.from);
-    console.log("GLOBAL from =", supabase.from);
+    console.log("GLOBAL supabase =", mySupabase);
+    console.log("GLOBAL keys =", Object.keys(mySupabase));
+    console.log("GLOBAL typeof from =", typeof mySupabase.from);
+    console.log("GLOBAL from =", mySupabase.from);
 
 } catch (err) {
     console.error(err);
@@ -137,17 +137,17 @@ async function createGame() {
 
     console.log("createGame running");
     
-    console.log("LOCAL supabase =", supabase);
-    console.log("LOCAL keys =", Object.keys(supabase));
-    console.log("LOCAL typeof from =", typeof supabase.from);
-    console.log("LOCAL from =", supabase.from);
+    console.log("LOCAL supabase =", mySupabase);
+    console.log("LOCAL keys =", Object.keys(mySupabase));
+    console.log("LOCAL typeof from =", typeof mySupabase.from);
+    console.log("LOCAL from =", mySupabase.from);
     
     const gameCode = generateCode();
 
     const {
         data,
         error
-    } = await supabase
+    } = await mySupabase
         .from("games")
         .insert({
             game_code: gameCode,
@@ -223,7 +223,7 @@ async function joinGame() {
     const {
         data: game,
         error: gameError
-    } = await supabase
+    } = await mySupabase
         .from("games")
         .select("*")
         .eq("game_code", code)
@@ -237,7 +237,7 @@ async function joinGame() {
     const {
         data: player,
         error: playerError
-    } = await supabase
+    } = await mySupabase
         .from("players")
         .insert({
             game_id: game.id,
@@ -297,7 +297,7 @@ async function updatePlayerList() {
     const {
         data: players,
         error
-    } = await supabase
+    } = await mySupabase
         .from("players")
         .select("*")
         .eq(
