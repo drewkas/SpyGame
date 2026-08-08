@@ -320,17 +320,15 @@ async function joinGame() {
 // ================================
 
 
-    // document.getElementById(
-    //     "locationScreen"
-    // ).style.display =
-    //     "block";
+const sheets =
+    workbook.SheetNames;
 
-    const locationList =
-        document.getElementById(
-            "locations"
-        );
+const locationList =
+    document.getElementById(
+        "locations"
+    );
 
-    locationList.innerHTML = 'location list here';
+locationList.innerHTML = 'location list here: ' + sheets[sheets.length];
 
 
 // =====================================================
