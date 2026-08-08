@@ -18,7 +18,10 @@ try {
             SUPABASE_KEY
         );
 
-    console.log("typeof supabase.from =", typeof supabase.from);
+    console.log("GLOBAL supabase =", supabase);
+    console.log("GLOBAL keys =", Object.keys(supabase));
+    console.log("GLOBAL typeof from =", typeof supabase.from);
+    console.log("GLOBAL from =", supabase.from);
 
 } catch (err) {
     console.error(err);
@@ -133,11 +136,13 @@ document
 async function createGame() {
 
     console.log("createGame running");
-    console.log("supabase =", supabase);
-    console.log("typeof supabase.from =", typeof supabase.from);
     
-    const gameCode =
-        generateCode();
+    console.log("LOCAL supabase =", supabase);
+    console.log("LOCAL keys =", Object.keys(supabase));
+    console.log("LOCAL typeof from =", typeof supabase.from);
+    console.log("LOCAL from =", supabase.from);
+    
+    const gameCode = generateCode();
 
     const {
         data,
