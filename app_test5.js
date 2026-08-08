@@ -128,10 +128,6 @@ document
         createGame
     );
 
-// debug 
-console.log(Object.keys(supabase));
-//
-
 async function createGame() {
 
     console.log("createGame running");
