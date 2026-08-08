@@ -27,15 +27,45 @@ try {
 
 }
 
-//const supabase = window.supabase.createClient(
-//    SUPABASE_URL,
-//    SUPABASE_KEY
-//);
-
 // =====================================================
 // GLOBAL VARIABLES
 // =====================================================
 
 let workbook = null;
 let currentGame = null;
+
+// =====================================================
+// LOAD EXCEL WORKBOOK
+// =====================================================
+
+async function loadWorkbook() {
+
+    try {
+
+        const response =
+            await fetch("locations.xlsx");
+
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        workbook =
+            XLSX.read(arrayBuffer, {
+                type: "array"
+            });
+
+        console.log(
+            "Workbook loaded:",
+            workbook.SheetNames
+        );
+
+    } catch (err) {
+
+        console.error(
+            "Failed to load workbook",
+            err
+        );
+    }
+}
+
+loadWorkbook();
 
