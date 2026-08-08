@@ -65,7 +65,7 @@ async function loadWorkbook() {
     }
 }
 
-loadWorkbook();
+await loadWorkbook();
 
 // =====================================================
 // GENERATE GAME CODE
@@ -318,8 +318,6 @@ async function joinGame() {
 // ================================
 // LOCATIONS
 // ================================
-
-await myFunction();
 
 const sheets =
     workbook.SheetNames;
