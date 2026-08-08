@@ -319,12 +319,18 @@ async function joinGame() {
 // LOCATIONS
 // ================================
 
+
     document.getElementById(
-        "locations"
+        "locationScreen"
     ).style.display =
         "block";
 
-    result.innerHTML = '<div class="spy">YOU ARE THE SPY</div>';
+    const locationList =
+        document.getElementById(
+            "locations"
+        );
+
+    locationList.innerHTML = 'location list here';
 
 
 // =====================================================
