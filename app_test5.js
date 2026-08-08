@@ -65,7 +65,7 @@ async function loadWorkbook() {
     }
 }
 
-await loadWorkbook();
+loadWorkbook();
 
 // =====================================================
 // GENERATE GAME CODE
@@ -213,6 +213,7 @@ async function createGame() {
         "block";
 
     updatePlayerList();
+    getLocations();
 }
 
 // ======================================
@@ -319,16 +320,17 @@ async function joinGame() {
 // LOCATIONS
 // ================================
 
-const sheets =
-    workbook.SheetNames;
-
-const locationList =
-    document.getElementById(
-        "locations"
-    );
-
-locationList.innerHTML = "location list here: " + sheets[sheets.length - 1];
-
+function getLocations() {
+    const sheets =
+        workbook.SheetNames;
+    
+    const locationList =
+        document.getElementById(
+            "locations"
+        );
+    
+    locationList.innerHTML = "location list here: " + sheets[sheets.length - 1];
+}
 
 // =====================================================
 // PLAYER LIST
