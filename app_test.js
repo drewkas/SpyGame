@@ -73,7 +73,7 @@ loadWorkbook();
 // GENERATE GAME CODE
 // =====================================================
 
-function generateCode(length = 6) {
+function generateCode(length = 4) {
 
     const chars =
         "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -249,34 +249,47 @@ function startGame() {
 
 function assignRoles() {
 
-    const shuffledRoles =
-        shuffle([...roles]);
+    const sheetNames =
+        workbook.SheetNames;
 
-    const spyIndex =
-        Math.floor(
-            Math.random() * players.length
+    const randomSheet =
+        sheetNames[
+            Math.floor(
+                Math.random() *
+                sheetNames.length
+            )
+        ];
+
+    const worksheet =
+        workbook.Sheets[randomSheet];
+
+    const roles =
+        XLSX.utils
+            .sheet_to_json(
+                worksheet,
+                { header: 1 }
+            )
+            .flat()
+            .filter(Boolean);
+
+    if (
+        roles.length <
+        players.length - 1
+    ) {
+
+        alert(
+            "Not enough roles in selected sheet."
         );
 
-    let roleIndex = 0;
+        return;
+    }
 
-    players.forEach((player, index) => {
-
-        if (index === spyIndex) {
-
-            player.assignment =
-                "You are the Spy";
-
-        } else {
-
-            player.assignment =
-                shuffledRoles[roleIndex];
-
-            roleIndex++;
-        }
-    });
+    const shuffledRoles =
+        shuffle(roles);
 
     showAssignments();
 }
+
 
 // ======================================
 // Demo Results Screen
