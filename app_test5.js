@@ -328,7 +328,7 @@ const locationList =
         "locations"
     );
 
-locationList.innerHTML = 'location list here: ' + sheets[sheets.length];
+locationList.innerHTML = "location list here: " + sheets[sheets.length];
 
 
 // =====================================================
