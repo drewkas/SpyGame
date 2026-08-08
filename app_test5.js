@@ -639,7 +639,7 @@ setInterval(async () => {
         )
         .single();
 
-    console.log("game status:", game?.status);
+    // console.log("game status:", game?.status);
     
     if (
         game &&
