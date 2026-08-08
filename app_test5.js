@@ -11,21 +11,33 @@ alert("app.js loaded");
 const SUPABASE_URL = "https://cevpdsrjsqavrrtlpyoa.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNldnBkc3Jqc3FhdnJydGxweW9hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMzE3NTUsImV4cCI6MjEwMTcwNzc1NX0.nl5HKXm2AOcQYFDSQARmcRVXvCRe9cf32OEj3P5Jk6w";
 
-try {
-    const mySupabase =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY
-        );
+// try {
+//     const mySupabase =
+//         window.supabase.createClient(
+//             SUPABASE_URL,
+//             SUPABASE_KEY
+//         );
 
-    console.log("GLOBAL supabase =", mySupabase);
-    console.log("GLOBAL keys =", Object.keys(mySupabase));
-    console.log("GLOBAL typeof from =", typeof mySupabase.from);
-    console.log("GLOBAL from =", mySupabase.from);
+//     console.log("GLOBAL supabase =", mySupabase);
+//     console.log("GLOBAL keys =", Object.keys(mySupabase));
+//     console.log("GLOBAL typeof from =", typeof mySupabase.from);
+//     console.log("GLOBAL from =", mySupabase.from);
 
-} catch (err) {
-    console.error(err);
-}
+// } catch (err) {
+//     console.error(err);
+// }
+
+
+const mySupabase =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+console.log("GLOBAL supabase =", mySupabase);
+console.log("GLOBAL keys =", Object.keys(mySupabase));
+console.log("GLOBAL typeof from =", typeof mySupabase.from);
+console.log("GLOBAL from =", mySupabase.from);
 
 // =====================================================
 // GLOBAL VARIABLES
