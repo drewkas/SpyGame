@@ -136,17 +136,6 @@ document
         createGame
     );
 
-const hostName =
-    document
-        .getElementById("playerName")
-        .value
-        .trim();
-
-if (!hostName) {
-    alert("Please enter your name.");
-    return;
-}
-
 async function createGame() {
 
     console.log("createGame running");
@@ -159,6 +148,17 @@ async function createGame() {
     const gameCode = generateCode();
 
     console.log("Created game code:", gameCode);
+
+    const hostName =
+    document
+        .getElementById("playerName")
+        .value
+        .trim();
+
+    if (!hostName) {
+        alert("Please enter your name.");
+        return;
+    }
     
     const {
         data,
