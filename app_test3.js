@@ -27,6 +27,7 @@ try {
     //console.log(supabaseClient);
     
     console.log(Object.keys(supabase));
+    console.log("from =", supabase.from);
 
     //console.log("Supabase client created");
     //console.log("supabase =", window.supabase);
