@@ -390,7 +390,8 @@ function chooseRandomSheet() {
             Math.random() *
             sheets.length
         );
-
+    
+    console.log("Sheet:", sheets[index]);
     return sheets[index];
 }
 
@@ -449,8 +450,6 @@ async function startGame() {
 
     const sheetName = chooseRandomSheet();
 
-    console.log("Sheet:", sheetName);
-    
     const roles = getRoles(sheetName);
 
     if (
