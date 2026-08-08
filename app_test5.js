@@ -620,7 +620,7 @@ setInterval(async () => {
             "gameId"
         );
 
-    console.log("gameId: ", gameId);
+    // console.log("gameId: ", gameId);
 
     if (!gameId) {
         return;
@@ -637,6 +637,8 @@ setInterval(async () => {
         )
         .single();
 
+    console.log("game status:", game?.status);
+    
     if (
         game &&
         game.status === "started"
