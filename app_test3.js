@@ -20,6 +20,7 @@ try {
         );
 
     console.log("Supabase client created");
+    console.log("supabase =", supabase);
 
 } catch (err) {
     console.error(err);
