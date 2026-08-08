@@ -28,6 +28,7 @@ try {
     
     console.log("client =", supabase);
     console.log("from =", supabase.from);
+    console.log("typeof supabase.from =", typeof supabase.from);
     console.log("keys =", Object.keys(supabase));
 
     //console.log("Supabase client created");
