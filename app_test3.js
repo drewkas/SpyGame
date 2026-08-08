@@ -178,3 +178,184 @@ async function createGame() {
 
     updatePlayerList();
 }
+
+// ======================================
+// Join Game
+// ======================================
+
+document
+    .getElementById("joinGameBtn")
+    .addEventListener(
+        "click",
+        joinGame
+    );
+
+async function joinGame() {
+
+    const code =
+        document
+            .getElementById("gameCode")
+            .value
+            .trim()
+            .toUpperCase();
+
+    const playerName =
+        document
+            .getElementById("playerName")
+            .value
+            .trim();
+
+    if (!code || !playerName) {
+
+        alert(
+            "Enter a game code and player name."
+        );
+
+        return;
+    }
+
+    const {
+        data: game,
+        error: gameError
+    } = await supabase
+        .from("games")
+        .select("*")
+        .eq("game_code", code)
+*       .single();
+
+    if (gameErr*r || !game) {
+
+        alert("Game not found.");
+
+        return;
+    }
+
+    const {
+        data: player,
+        error: playerError
+    } = await supabase
+        .from("players")
+        .insert({
+            game_id: game.id,
+            player_name: playerName
+        })
+        .select()
+        .single();
+
+    if (playerError) {
+
+        console.error(playerError);
+
+        alert(
+            "Unable to join game."
+        );
+
+        return;
+    }
+
+    localStorage.setItem(
+        "playerId",
+        player.id
+    );
+
+    localStorage.setItem(
+        "gameId",
+        game.id
+    );
+
+    localStorage.setItem(
+        "playerName",
+        playerName
+    );
+
+    document.getElementById(
+        "home"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "waitingRoom"
+    ).style.display =
+        "block";
+}
+
+
+// =====================================================
+// PLAYER LIST
+// =====================================================
+
+async function updatePlayerList() {
+
+    if (!currentGame) {
+        return;
+    }
+
+    const {
+        data: players,
+        error
+    } = await supabase
+        .from("players")
+        .select("*")
+        .eq(
+            "game_id",
+            currentGame.id
+        );
+
+    if (error) {
+
+        console.error(error);
+
+        return;
+    }
+
+    const list =
+        document.getElementById(
+            "playerList"
+        );
+
+    list.innerHTML = "";
+
+    players.forEach(player => {
+
+        const li =
+            document.createElement("li");
+
+        li.textContent =
+            player.player_name;
+
+        list.appendChild(li);
+
+    });
+
+}
+
+// refresh waiting room every 3 seconds
+
+setInterval(() => {
+
+    if (currentGame) {
+
+        updatePlayerList();
+
+    }
+
+}, 3000);
+
+
+// =====================================================
+// RANDOM SHEET
+// =====================================================
+
+function chooseRandomSheet() {
+
+    const sheets =
+        workbook.SheetNames;
+
+    const index =
+        Math.floor(
+            Math.random() *
+            sheets.length
+        );
+
+    return sheets[index];
+}
