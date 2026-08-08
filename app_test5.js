@@ -118,9 +118,7 @@ function shuffle(array) {
 // Create Game
 // ======================================
 
-console.log("Looking for Create Game button");
 const button = document.getElementById("createGameBtn");
-console.log(button);
 
 document
     .getElementById("createGameBtn")
@@ -131,8 +129,6 @@ document
 
 async function createGame() {
 
-    console.log("createGame running");
-    
     const gameCode = generateCode();
 
     console.log("Created game code:", gameCode);
