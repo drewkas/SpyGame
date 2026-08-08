@@ -151,12 +151,12 @@ console.log(Object.keys(supabase));
 
 async function createGame() {
 
-    console.log("createGame running");
-    console.log("supabase =", supabase);
-    console.log(
-        "typeof supabase.from =",
-        typeof supabase.from
-    );
+    // console.log("createGame running");
+    // console.log("supabase =", supabase);
+    // console.log(
+    //     "typeof supabase.from =",
+    //     typeof supabase.from
+    // );
 
     // rest of your code
 }
