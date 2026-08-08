@@ -125,6 +125,12 @@ function shuffle(array) {
 // Create Game
 // ======================================
 
+console.log("Looking for Create Game button");
+
+const button = document.getElementById("createGameBtn");
+
+console.log(button);
+
 document
     .getElementById("createGameBtn")
     .addEventListener("click", () => {
