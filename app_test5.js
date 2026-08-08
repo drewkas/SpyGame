@@ -150,10 +150,10 @@ async function createGame() {
     console.log("Created game code:", gameCode);
 
     const hostName =
-    document
-        .getElementById("playerName")
-        .value
-        .trim();
+        document
+            .getElementById("playerName")
+            .value
+            .trim();
 
     if (!hostName) {
         alert("Please enter your name.");
