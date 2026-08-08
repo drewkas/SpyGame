@@ -180,3 +180,101 @@ async function createGame() {
 
     updatePlayerList();
 }
+
+// ======================================
+// Join Game
+// ======================================
+
+document
+    .getElementById("joinGameBtn")
+    .addEventListener(
+        "click",
+        joinGame
+    );
+
+async function joinGame() {
+
+    const code =
+        document
+            .getElementById("gameCode")
+            .value
+            .trim()
+            .toUpperCase();
+
+    const playerName =
+        document
+            .getElementById("playerName")
+            .value
+            .trim();
+
+    if (!code || !playerName) {
+
+        alert(
+            "Enter a game code and player name."
+        );
+
+        return;
+    }
+
+    const {
+        data: game,
+        error: gameError
+    } = await supabase
+        .from("games")
+        .select("*")
+        .eq("game_code", code)
+        .single();
+
+    if (gameError || !game) {
+        alert("Game not found.");
+        return;
+    }
+
+    const {
+        data: player,
+        error: playerError
+    } = await supabase
+        .from("players")
+        .insert({
+            game_id: game.id,
+            player_name: playerName
+        })
+        .select()
+        .single();
+
+    if (playerError) {
+
+        console.error(playerError);
+
+        alert(
+            "Unable to join game."
+        );
+
+        return;
+    }
+
+    localStorage.setItem(
+        "playerId",
+        player.id
+    );
+
+    localStorage.setItem(
+        "gameId",
+        game.id
+    );
+
+    localStorage.setItem(
+        "playerName",
+        playerName
+    );
+
+    document.getElementById(
+        "home"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "waitingRoom"
+    ).style.display =
+        "block";
+}
