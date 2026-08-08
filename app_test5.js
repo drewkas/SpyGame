@@ -324,12 +324,15 @@ function getLocations() {
     const sheets =
         workbook.SheetNames;
     
-    const locationList =
-        document.getElementById(
-            "locations"
-        );
+    const locationList = document.getElementById("locations");
     
-    locationList.innerHTML = "location list here: " + sheets[sheets.length - 1];
+    // locationList.innerHTML = "location list here: " + sheets[sheets.length - 1];
+
+    sheets.forEach(sheet => {
+        const li = document.createElement("li");
+        li.textContent = sheet;
+        list.appendChild(li);
+    });
 }
 
 // =====================================================
