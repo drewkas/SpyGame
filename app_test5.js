@@ -225,6 +225,8 @@ async function joinGame() {
         return;
     }
 
+    console.log("Searching for game:", code);
+    
     const {
         data: game,
         error: gameError
