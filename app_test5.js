@@ -36,6 +36,7 @@ try {
 
 let workbook = null;
 let currentGame = null;
+let sheetName = null;
 
 // =====================================================
 // LOAD EXCEL WORKBOOK
