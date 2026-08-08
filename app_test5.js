@@ -319,6 +319,7 @@ async function joinGame() {
 // LOCATIONS
 // ================================
 
+await myFunction();
 
 const sheets =
     workbook.SheetNames;
